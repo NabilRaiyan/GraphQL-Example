@@ -1,7 +1,6 @@
 const express = require('express');
 // const { buildSchema }  = require('graphql');
-const { graphqlHTTP } = require('express-graphql');
-// const path = require('path');
+const { ApolloServer } = require('apollo-server-express');
 
 const { makeExecutableSchema } = require('@graphql-tools/schema');
 const { loadFilesSync } = require('@graphql-tools/load-files');
@@ -14,74 +13,31 @@ const resolversArray = loadFilesSync('**/*', {
     extensions: ['resolver.js']
 });
 
-const schema = makeExecutableSchema({
-    typeDefs: typesArray,
-    resolvers: resolversArray,
-    // { 
-    //     Query: {
-    //         products: async(parent, args, context, info)=>{
-    //             const product = await Promise.resolve(parent.products);
-    //             return product;
-    //         },
-    //         orders: (parent)=>{
-    //             return parent.orders;
-    //         },
-    //     }
-    // }
-});
+async function startApolloServer(){
+    const app = express();
 
+    const schema = makeExecutableSchema({
+        typeDefs: typesArray,
+        resolvers: resolversArray,
+    });
 
-// // values
-// const root = {
-//     products: require('./products/products.model'),
-//     orders: require('./orders/orders.model'),
-//     customers: require('./customes/customers.model'),
-// }
+    const server = new ApolloServer({
+        schema: schema
+    });
 
+    await server.start();
+    server.applyMiddleware({
+        app, 
+        path: '/graphql'
+    });
 
-const app = express();
-// mounting graphql values and route
-app.use('/graphql',graphqlHTTP({
-    schema: schema,
-    // rootValue: root,
-    graphiql: true,
-}));
-
-app.listen(3000, ()=>{
-    console.log("GraphQl Server is listining on port 3000...");
-});
+    app.listen(3000, ()=>{
+        console.log("GraphQl Server is listining on port 3000...");
+    });
+}
+startApolloServer();
 
 
 
 
 
-// // schema ( here ! means field is required )
-// // ID is graphql type
-// const schema = buildSchema(`
-//     type Query {
-//         products: [Product]
-//         orders: [Order]
-//     }
-
-//     type Product {
-//         id: ID!
-//         description: String!
-//         reviews: [Review]
-//         price: Float!
-//     }
-//     type Review {
-//         rating: Float!
-//         comment: String
-//     }
-
-//     type Order {
-//         date: String!
-//         subtotal: Float!
-//         items: [OrderItem]
-//     }
-
-//     type OrderItem {
-//         product: Product!
-//         quantity: Int!
-//     }
-// `);
