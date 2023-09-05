@@ -1,0 +1,12 @@
+type Query {
+    customers: [Customers]
+}
+
+
+type Customers{
+    id: ID!
+    name: String!
+    age: Int!
+    gender: String!
+    orders: [Order]
+}
