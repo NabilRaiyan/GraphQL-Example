@@ -3,6 +3,12 @@
         productByPrice(min: Float!, max: Float!): [Product]
         productById(id: ID!):[Product]
     }
+
+# adding new products
+type Mutation{
+    addNewProduct(id: ID!, description: String!, price:Float!): Product
+    addNewProductReview(id: ID!, rating:Int!, comment:String): Review
+}
  
  
  type Product {
