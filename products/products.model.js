@@ -33,6 +33,10 @@ const products = [
         return products.filter((product)=>{
             return product.id === id;
         });
+
+        // return products.find((product)=>{
+        //     return product.id === id;
+        // });
     }
 
     module.exports = {
